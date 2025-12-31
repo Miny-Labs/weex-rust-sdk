@@ -149,6 +149,42 @@ impl WeexClient {
         })
     }
 
+    /// Place a futures/contract order
+    #[tracing::instrument(skip(self))]
+    pub async fn place_futures_order(
+        &self,
+        symbol: &str,
+        size: &str,
+        side: crate::types::Side,
+        order_type: crate::types::OrderType,
+        price: Option<&str>,
+        client_oid: Option<&str>,
+    ) -> Result<String, WeexError> {
+        let path = "/capi/v2/order/placeOrder";
+        let mut body_map = serde_json::json!({
+            "symbol": symbol,
+            "size": size,
+            "side": side,
+            "orderType": order_type,
+            "marginCoin": "USDT"
+        });
+        
+        if let Some(p) = price {
+            body_map["price"] = serde_json::Value::String(p.to_string());
+        }
+        if let Some(oid) = client_oid {
+            body_map["clientOid"] = serde_json::Value::String(oid.to_string());
+        }
+        
+        let body = body_map.to_string();
+        let url = format!("{}{}", self.base_url, path);
+        let timestamp = self.get_timestamp();
+        let headers = self.build_headers("POST", path, "", &body, &timestamp)?;
+
+        let resp = self.client.post(&url).headers(headers).body(body).send().await?;
+        Ok(resp.text().await?)
+    }
+
     /// Cancel a single order
     #[tracing::instrument(skip(self))]
     pub async fn cancel_order(&self, symbol: &str, order_id: &str) -> Result<String, WeexError> {

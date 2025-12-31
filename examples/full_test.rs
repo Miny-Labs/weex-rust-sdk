@@ -96,19 +96,17 @@ async fn main() {
     // ========== ORDER PLACEMENT (Dry Run - will fail if no balance) ==========
     println!("\n📝 ORDER PLACEMENT (may fail if no balance)");
 
-    // 10. Place Order
-    print!("  place_order()... ");
-    let order = weex_rust_sdk::spot::order::PlaceOrderRequest {
-        symbol: symbol.to_string(),
-        client_oid: format!("test_{}", chrono::Utc::now().timestamp()),
-        size: Decimal::from_str("0.001").unwrap(),
-        side: Side::Buy,
-        order_type: OrderType::Limit,
-        match_price: false,
-        price: Some(Decimal::from_str("50000").unwrap()),
-    };
-    match client.place_order(&order).await {
-        Ok(resp) => println!("✅ Order ID: {}", resp.order_id),
+    // 10. Place Futures Order
+    print!("  place_futures_order()... ");
+    match client.place_futures_order(
+        symbol,
+        "0.001",
+        Side::Buy,
+        OrderType::Limit,
+        Some("50000"),
+        Some(&format!("test_{}", chrono::Utc::now().timestamp())),
+    ).await {
+        Ok(resp) => println!("✅ Response: {} bytes", resp.len()),
         Err(e) => println!("⚠️  {:?}", e),
     }
 
