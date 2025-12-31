@@ -3,7 +3,7 @@ pub mod client;
 pub mod util;
 pub mod spot;
 pub mod future;
-pub mod ws; // Enabled
+pub mod ws;
 pub mod traits;
 pub mod strategy;
 pub mod manager;
@@ -12,12 +12,19 @@ pub mod types;
 pub mod builder;
 pub mod rate_limiter;
 pub mod retry;
+pub mod risk;
+pub mod engine;
+pub mod state;
+pub mod alerts;
 
 pub use client::WeexClient;
 pub use builder::WeexClientBuilder;
-
-
 pub use error::WeexError;
 pub use traits::Exchange;
 pub use strategy::{Strategy, Context};
 pub use manager::OrderManager;
+pub use risk::{RiskConfig, PositionSizer};
+pub use engine::{Engine, Signal};
+pub use state::{StateManager, TradeRecord};
+pub use alerts::{TelegramAlerter, TelegramConfig};
+
