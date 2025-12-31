@@ -40,7 +40,7 @@ async fn run_benchmark() {
     let passphrase = "weex4662269";
     // Initialize Client (V4 Builder)
     let client = WeexClient::builder()
-        .base_url("https://api.weex.com")
+        .base_url("https://api-contract.weex.com")
         .api_key(&api_key)
         .secret_key(&secret)
         .passphrase(&passphrase)
