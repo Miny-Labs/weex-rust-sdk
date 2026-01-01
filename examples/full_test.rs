@@ -40,7 +40,7 @@ async fn main() {
 
     // 3. Orderbook Depth
     print!("  get_depth()... ");
-    match client.get_depth(symbol, 5).await {
+    match client.get_depth(symbol, None).await {
         Ok(data) => println!("✅ Got {} bytes", data.len()),
         Err(e) => println!("❌ {:?}", e),
     }

@@ -27,4 +27,4 @@ pub use risk::{RiskConfig, PositionSizer};
 pub use engine::{Engine, Signal};
 pub use state::{StateManager, TradeRecord};
 pub use alerts::{TelegramAlerter, TelegramConfig};
-
+pub use types::{Side, OrderType, TimeInForce, MarginMode, PositionSide, TriggerType, AILogStage};
