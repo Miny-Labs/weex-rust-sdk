@@ -1,9 +1,9 @@
 [package]
 name = "weex_rust_sdk"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
-authors = ["WEEX Community"]
-description = "Professional-grade Rust SDK for WEEX Exchange - Spot, Futures, WebSocket with async/await"
+authors = ["Akash Mondal <akash-mondal>"]
+description = "Professional Rust SDK for WEEX Exchange - AI Wars ready with full API coverage, AI Log upload, Futures trading"
 license = "MIT"
 repository = "https://github.com/akash-mondal/weex-rust-sdk"
 keywords = ["weex", "crypto", "trading", "exchange", "sdk"]
