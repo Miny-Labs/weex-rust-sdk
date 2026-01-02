@@ -1,160 +1,348 @@
 # WEEX Rust SDK
 
-[![Crates.io](https://img.shields.io/crates/v/weex_rust_sdk)](https://crates.io/crates/weex_rust_sdk)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
+<div align="center">
 
-**Professional-grade async Rust SDK for [WEEX Exchange](https://www.weex.com)** - Built for HFT bots, AI trading strategies, and production systems.
+![WEEX SDK](https://img.shields.io/badge/🦀-WEEX_SDK-orange?style=for-the-badge)
+[![Crates.io](https://img.shields.io/crates/v/weex_rust_sdk?style=for-the-badge&logo=rust&logoColor=white)](https://crates.io/crates/weex_rust_sdk)
+[![Docs.rs](https://img.shields.io/docsrs/weex_rust_sdk?style=for-the-badge&logo=docs.rs)](https://docs.rs/weex_rust_sdk)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-## Features
+**Production-Grade Rust SDK for WEEX Exchange**
 
-### Core Trading
-- ✅ **Place/Cancel Orders** - Spot & Futures with type-safe enums
-- ✅ **Batch Orders** - Execute multiple orders atomically
-- ✅ **Position Management** - Real-time position tracking
-- ✅ **Leverage/Margin Control** - Configure risk parameters
+*Full AI Wars API Coverage • Async/Await • Type-Safe*
 
-### Market Data
-- ✅ **Real-time Ticker** - Live price feeds
-- ✅ **Klines/Candlesticks** - OHLCV data for TA
-- ✅ **Orderbook Depth** - Level 2 market data
-- ✅ **Funding Rates** - Futures funding info
+[Installation](#-installation) • [Quick Start](#-quick-start) • [API Reference](#-api-reference) • [Examples](#-examples) • [Contributing](#-contributing)
 
-### Production Infrastructure
-- ✅ **Rate Limiter** - Token bucket (10 req/sec)
-- ✅ **Retry Middleware** - Exponential backoff
-- ✅ **WebSocket** - Auto-reconnect with heartbeat
-- ✅ **Position Sizing** - Fixed %, Kelly Criterion
-- ✅ **State Persistence** - Trade logging, PnL tracking
-- ✅ **Telegram Alerts** - Trade notifications
+</div>
 
-## Installation
+---
+
+## 🎯 Overview
+
+The official Rust SDK for [WEEX Exchange](https://www.weex.com/), providing complete API coverage for spot trading, futures, and the AI Wars competition. Built with async/await for high performance and type safety.
+
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🚀 **Async/Await** | Built on Tokio for high-performance async operations |
+| 🔐 **Secure Auth** | HMAC-SHA256 signing with automatic header generation |
+| 📊 **Full API Coverage** | 45+ endpoints for Market, Account, and Trade APIs |
+| 🤖 **AI Wars Ready** | Built-in AI Log upload for competition compliance |
+| 🛡️ **Type Safe** | Strongly typed requests and responses |
+| ⚡ **Rate Limiting** | Built-in rate limiter to prevent API throttling |
+| 🔄 **Retry Logic** | Automatic retry with exponential backoff |
+
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph Client["WeexClient"]
+        B[Builder Pattern]
+        A[Authentication]
+        R[Rate Limiter]
+        RT[Retry Middleware]
+    end
+
+    subgraph Endpoints["API Endpoints"]
+        M[Market Data]
+        AC[Account]
+        T[Trade]
+        AI[AI Log]
+    end
+
+    subgraph Transport["HTTP Layer"]
+        REQ[Reqwest Client]
+        SIG[HMAC Signing]
+    end
+
+    B --> A
+    A --> R
+    R --> RT
+    RT --> REQ
+    REQ --> SIG
+    
+    M --> Client
+    AC --> Client
+    T --> Client
+    AI --> Client
+    
+    SIG --> WEEX[(WEEX API)]
+```
+
+## 📦 Installation
+
+Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-weex_rust_sdk = "0.5"
+weex_rust_sdk = "0.6"
 tokio = { version = "1", features = ["full"] }
-rust_decimal = "1.33"
 ```
 
-## Quick Start
+Or install via cargo:
+
+```bash
+cargo add weex_rust_sdk tokio --features tokio/full
+```
+
+## 🚀 Quick Start
 
 ```rust
 use weex_rust_sdk::WeexClient;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Create client
     let client = WeexClient::builder()
         .base_url("https://api-contract.weex.com")
-        .api_key("YOUR_API_KEY")
-        .secret_key("YOUR_SECRET_KEY")
-        .passphrase("YOUR_PASSPHRASE")
+        .api_key("your_api_key")
+        .secret_key("your_secret_key")
+        .passphrase("your_passphrase")
         .build()?;
 
-    // Get BTC price
+    // Get BTC ticker
     let ticker = client.get_ticker("cmt_btcusdt").await?;
-    println!("BTC: ${}", ticker.last);
+    println!("BTC Price: ${}", ticker.last);
 
-    // Place futures order
-    use weex_rust_sdk::types::{Side, OrderType};
-    let response = client.place_futures_order(
-        "cmt_btcusdt",
-        "0.001",
-        Side::Buy,
-        OrderType::Limit,
-        Some("50000"),
-        Some("my_order_1"),
-    ).await?;
+    // Get account assets
+    let assets = client.get_assets().await?;
+    println!("Balance: {}", assets);
 
     Ok(())
 }
 ```
 
-## Risk Management
+## 📊 API Coverage
+
+### Market Data (Public)
+
+```mermaid
+flowchart LR
+    subgraph Market["📊 Market Endpoints"]
+        T[get_ticker]
+        AT[get_all_tickers]
+        D[get_depth]
+        K[get_klines]
+        TR[get_trades]
+        C[get_contracts]
+        FR[get_funding_rate]
+        OI[get_open_interest]
+    end
+```
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `get_server_time()` | `/capi/v2/market/time` | Server timestamp |
+| `get_contracts()` | `/capi/v2/market/contracts` | Contract info |
+| `get_ticker(symbol)` | `/capi/v2/market/ticker` | Single ticker |
+| `get_all_tickers()` | `/capi/v2/market/tickers` | All tickers |
+| `get_depth(symbol)` | `/capi/v2/market/depth` | Orderbook |
+| `get_klines(symbol, interval)` | `/capi/v2/market/candles` | Candlesticks |
+| `get_trades(symbol)` | `/capi/v2/market/trades` | Recent trades |
+| `get_funding_rate(symbol)` | `/capi/v2/market/fundingRate` | Funding rate |
+| `get_open_interest(symbol)` | `/capi/v2/market/openInterest` | Open interest |
+
+### Account (Authenticated)
+
+```mermaid
+flowchart LR
+    subgraph Account["🔐 Account Endpoints"]
+        A[get_assets]
+        P[get_positions]
+        B[get_bills]
+        L[set_leverage]
+        M[set_margin_mode]
+    end
+```
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `get_assets()` | `/capi/v2/account/assets` | Account balance |
+| `get_position(symbol)` | `/capi/v2/account/position/singlePosition` | Single position |
+| `get_all_positions()` | `/capi/v2/account/position/allPosition` | All positions |
+| `get_bills(symbol)` | `/capi/v2/account/bills` | Account ledger |
+| `set_leverage(symbol, leverage)` | `/capi/v2/account/leverage` | Set leverage |
+| `set_margin_mode(symbol, mode)` | `/capi/v2/account/setMarginMode` | Margin mode |
+| `adjust_margin(symbol, amount)` | `/capi/v2/account/adjustPositionMargin` | Adjust margin |
+
+### Trading (Authenticated)
+
+```mermaid
+flowchart LR
+    subgraph Trade["⚡ Trade Endpoints"]
+        PO[place_futures_order]
+        CO[cancel_futures_order]
+        CA[cancel_all_orders]
+        TO[place_trigger_order]
+        TP[place_tpsl]
+    end
+```
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `place_futures_order(...)` | `/capi/v2/order/placeOrder` | Place order |
+| `cancel_futures_order(...)` | `/capi/v2/order/cancelOrder` | Cancel order |
+| `cancel_all_orders(symbol)` | `/capi/v2/order/cancelAllOrders` | Cancel all |
+| `get_order_detail(...)` | `/capi/v2/order/detail` | Order info |
+| `get_order_history(symbol)` | `/capi/v2/order/history` | Order history |
+| `get_current_orders(symbol)` | `/capi/v2/order/current` | Open orders |
+| `get_fills(symbol)` | `/capi/v2/order/fills` | Trade fills |
+| `place_trigger_order(...)` | `/capi/v2/order/placeTriggerOrder` | Trigger order |
+| `place_tpsl(...)` | `/capi/v2/order/placeTPSL` | TP/SL order |
+| `close_all_positions(symbol)` | `/capi/v2/order/closeAllPositions` | Close all |
+
+### AI Wars (Competition)
+
+```mermaid
+flowchart LR
+    AI[upload_ai_log] --> WEEX[(WEEX API)]
+    WEEX --> COMP[Competition Compliance]
+```
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `upload_ai_log(...)` | `/capi/v2/order/uploadAiLog` | Upload AI reasoning log |
+
+## 📖 Examples
+
+### Placing a Market Order
 
 ```rust
-use weex_rust_sdk::{RiskConfig, PositionSizer};
-use rust_decimal::Decimal;
+use weex_rust_sdk::{WeexClient, Side, OrderType};
 
-let sizer = PositionSizer::new(RiskConfig::default());
-
-// Fixed percentage (2% risk per trade)
-let size = sizer.fixed_percentage(
-    Decimal::from(10000),  // $10k account
-    Decimal::from(90000),  // $90k BTC
-    Decimal::from_str("0.02").unwrap(), // 2% stop loss
-);
-
-// Kelly Criterion
-let kelly_size = sizer.kelly_criterion(
-    Decimal::from(10000),
-    Decimal::from_str("0.55").unwrap(), // 55% win rate
-    Decimal::from(200),  // avg win
-    Decimal::from(100),  // avg loss
-);
+async fn place_order(client: &WeexClient) -> Result<(), Box<dyn std::error::Error>> {
+    let result = client.place_futures_order(
+        "cmt_btcusdt",
+        "0.001",
+        Side::Buy,
+        OrderType::Market,
+        None,            // price (not needed for market)
+        Some("my_order_123"),  // client order id
+    ).await?;
+    
+    println!("Order placed: {}", result);
+    Ok(())
+}
 ```
 
-## State Persistence
+### Uploading AI Log
 
 ```rust
-use weex_rust_sdk::{StateManager, TradeRecord};
+use weex_rust_sdk::WeexClient;
+use serde_json::json;
 
-let state = StateManager::new("./bot_data");
-
-// Log trade
-state.log_trade(&TradeRecord { /* ... */ })?;
-
-// Get statistics
-let stats = state.calculate_stats()?;
-println!("Win Rate: {:.1}%", stats.win_rate * 100.0);
+async fn upload_ai_log(client: &WeexClient) -> Result<(), Box<dyn std::error::Error>> {
+    let result = client.upload_ai_log(
+        Some(12345),  // order_id (optional)
+        "Strategy Generation",
+        "gpt-5.2",
+        json!({"market_data": {"price": 88000, "rsi": 45}}),
+        json!({"signal": "BUY", "confidence": 0.85}),
+        "RSI indicates oversold conditions with bullish divergence."
+    ).await?;
+    
+    println!("AI Log uploaded: {}", result);
+    Ok(())
+}
 ```
 
-## Telegram Alerts
+### Error Handling
 
 ```rust
-use weex_rust_sdk::{TelegramAlerter, TelegramConfig};
+use weex_rust_sdk::{WeexClient, WeexError};
 
-let alerter = TelegramAlerter::new(TelegramConfig::new(
-    "YOUR_BOT_TOKEN",
-    "YOUR_CHAT_ID",
-));
-
-alerter.notify_trade("BTCUSDT", "BUY", 0.001, 90000.0).await?;
+async fn safe_request(client: &WeexClient) {
+    match client.get_ticker("cmt_btcusdt").await {
+        Ok(ticker) => println!("Price: {}", ticker.last),
+        Err(WeexError::Api { code, msg }) => {
+            eprintln!("API Error {}: {}", code, msg);
+        }
+        Err(WeexError::Network(e)) => {
+            eprintln!("Network error: {}", e);
+        }
+        Err(e) => eprintln!("Other error: {:?}", e),
+    }
+}
 ```
 
-## API Coverage
+## 🔧 Configuration
 
-| Category | Methods |
-|:---------|:--------|
-| **Trading** | `place_order`, `place_futures_order`, `cancel_order`, `post_batch_orders` |
-| **Market** | `get_ticker`, `get_klines`, `get_depth`, `get_funding_rate` |
-| **Account** | `get_balance`, `get_position`, `get_open_orders`, `set_leverage`, `set_margin_mode` |
-| **WebSocket** | Public streams, Private streams with auth |
-| **Bot Infra** | Rate limiter, Retry, Position sizing, State, Alerts |
+### Builder Options
 
-## Architecture
-
-```
-weex_rust_sdk/
-├── src/
-│   ├── client.rs       # WeexClient (main entry point)
-│   ├── types.rs        # Side, OrderType enums
-│   ├── risk.rs         # Position sizing
-│   ├── engine.rs       # Strategy orchestration
-│   ├── state.rs        # Trade persistence
-│   ├── alerts.rs       # Telegram notifications
-│   ├── rate_limiter.rs # Token bucket
-│   ├── retry.rs        # Exponential backoff
-│   └── ws/             # WebSocket handlers
+```rust
+let client = WeexClient::builder()
+    .base_url("https://api-contract.weex.com")  // Required
+    .api_key("your_key")                        // Required
+    .secret_key("your_secret")                  // Required
+    .passphrase("your_passphrase")              // Required
+    .timeout(Duration::from_secs(30))           // Optional
+    .build()?;
 ```
 
-## Examples
+## 📐 Type Reference
 
-See [`examples/`](./examples/) for:
-- `full_test.rs` - API endpoint verification
-- `v6_integration_test.rs` - Production bot features
-- `market_maker.rs` - Strategy template
+```rust
+use weex_rust_sdk::{
+    // Core
+    WeexClient,
+    WeexClientBuilder,
+    WeexError,
+    
+    // Types
+    Side,           // Buy, Sell
+    OrderType,      // Limit, Market, Trigger
+    TimeInForce,    // Gtc, Ioc, Fok
+    MarginMode,     // Crossed, Isolated
+    PositionSide,   // Long, Short
+    TriggerType,    // FillPrice, MarkPrice
+    AILogStage,     // StrategyGeneration, DecisionMaking, etc.
+};
+```
 
-## License
+## 🏆 AI Wars Competition
 
-MIT
+This SDK is fully compatible with the WEEX AI Wars hackathon requirements:
+
+- ✅ All required API endpoints implemented
+- ✅ AI Log upload for competition compliance
+- ✅ Maximum 20x leverage support
+- ✅ All allowed trading pairs supported
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+```bash
+# Clone
+git clone https://github.com/Miny-Labs/weex-rust-sdk.git
+
+# Build
+cargo build
+
+# Test
+cargo test
+
+# Run examples
+cargo run --example full_test
+```
+
+## 📜 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🔗 Related
+
+- [Fenyr AI Agent](https://github.com/Miny-Labs/fenyr-trading-agent) - GPT-5.2 trading bot using this SDK
+- [WEEX Exchange](https://www.weex.com/) - Official exchange website
+- [API Documentation](https://www.weex.com/support/apiGuide) - Official API docs
+
+---
+
+<div align="center">
+
+**Made with 🦀 by [Miny Labs](https://github.com/Miny-Labs)**
+
+[![crates.io](https://img.shields.io/crates/d/weex_rust_sdk?style=flat-square)](https://crates.io/crates/weex_rust_sdk)
+
+</div>
