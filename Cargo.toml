@@ -1,6 +1,6 @@
 [package]
 name = "weex_rust_sdk"
-version = "0.6.0"
+version = "0.6.1"
 edition = "2021"
 authors = ["Akash Mondal <akash-mondal>"]
 description = "Professional Rust SDK for WEEX Exchange - AI Wars ready with full API coverage, AI Log upload, Futures trading"
