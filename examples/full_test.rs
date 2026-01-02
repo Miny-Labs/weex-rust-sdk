@@ -7,9 +7,13 @@ use std::str::FromStr;
 async fn main() {
     println!("=== WEEX Rust SDK - Full Feature Test ===\n");
 
-    let api_key = "weex_2cd87fb352ae668394f62ddf720725dc";
-    let secret = "b22aea1dca700c1942ad8a0d36398d1987f4933d7200f4ecdec53369767586c9";
-    let passphrase = "weex4662269";
+    // Load credentials from environment variables
+    let api_key = std::env::var("WEEX_API_KEY")
+        .expect("WEEX_API_KEY environment variable required");
+    let secret = std::env::var("WEEX_SECRET_KEY")
+        .expect("WEEX_SECRET_KEY environment variable required");
+    let passphrase = std::env::var("WEEX_PASSPHRASE")
+        .expect("WEEX_PASSPHRASE environment variable required");
     
     let client = WeexClient::builder()
         .base_url("https://api-contract.weex.com")
