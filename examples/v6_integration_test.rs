@@ -5,21 +5,23 @@ use weex_rust_sdk::{
 use weex_rust_sdk::types::{Side, OrderType};
 use rust_decimal::Decimal;
 use std::str::FromStr;
+use std::env;
 use chrono::Utc;
 
 #[tokio::main]
 async fn main() {
     println!("=== WEEX Rust SDK - V6 Full Integration Test ===\n");
 
-    let api_key = "weex_2cd87fb352ae668394f62ddf720725dc";
-    let secret = "b22aea1dca700c1942ad8a0d36398d1987f4933d7200f4ecdec53369767586c9";
-    let passphrase = "weex4662269";
+    // Load credentials from environment
+    let api_key = env::var("WEEX_API_KEY").expect("WEEX_API_KEY required");
+    let secret = env::var("WEEX_SECRET_KEY").expect("WEEX_SECRET_KEY required");
+    let passphrase = env::var("WEEX_PASSPHRASE").expect("WEEX_PASSPHRASE required");
     
     let client = WeexClient::builder()
         .base_url("https://api-contract.weex.com")
-        .api_key(api_key)
-        .secret_key(secret)
-        .passphrase(passphrase)
+        .api_key(&api_key)
+        .secret_key(&secret)
+        .passphrase(&passphrase)
         .build()
         .expect("Failed to build client");
 

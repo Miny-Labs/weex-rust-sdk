@@ -15,15 +15,17 @@ async fn main() {
     }
 
     println!("Starting WEEX Rust SDK Example (Async)...");
-    // Normal single execution (V4 Builder)
-    let api_key = "weex_2cd87fb352ae668394f62ddf720725dc";
-    let secret = "b22aea1dca700c1942ad8a0d36398d1987f4933d7200f4ecdec53369767586c9";
-    let passphrase = "weex4662269";
+    
+    // Load credentials from environment
+    let api_key = env::var("WEEX_API_KEY").expect("WEEX_API_KEY environment variable required");
+    let secret = env::var("WEEX_SECRET_KEY").expect("WEEX_SECRET_KEY environment variable required");
+    let passphrase = env::var("WEEX_PASSPHRASE").expect("WEEX_PASSPHRASE environment variable required");
+    
     let client = WeexClient::builder()
         .base_url("https://api-contract.weex.com")
-        .api_key(api_key)
-        .secret_key(secret)
-        .passphrase(passphrase)
+        .api_key(&api_key)
+        .secret_key(&secret)
+        .passphrase(&passphrase)
         .build()
         .expect("Failed to build client");
 
@@ -35,10 +37,12 @@ async fn main() {
 
 async fn run_benchmark() {
     println!("Starting Rust HFT Benchmark (50 Concurrent Requests)...");
-    let api_key = "weex_2cd87fb352ae668394f62ddf720725dc";
-    let secret = "b22aea1dca700c1942ad8a0d36398d1987f4933d7200f4ecdec53369767586c9";
-    let passphrase = "weex4662269";
-    // Initialize Client (V4 Builder)
+    
+    // Load credentials from environment
+    let api_key = env::var("WEEX_API_KEY").expect("WEEX_API_KEY required");
+    let secret = env::var("WEEX_SECRET_KEY").expect("WEEX_SECRET_KEY required");
+    let passphrase = env::var("WEEX_PASSPHRASE").expect("WEEX_PASSPHRASE required");
+    
     let client = WeexClient::builder()
         .base_url("https://api-contract.weex.com")
         .api_key(&api_key)
