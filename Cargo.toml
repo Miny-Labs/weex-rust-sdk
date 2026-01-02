@@ -1,6 +1,6 @@
 [package]
 name = "weex_rust_sdk"
-version = "0.6.1"
+version = "0.6.2"
 edition = "2021"
 authors = ["Akash Mondal <akash-mondal>"]
 description = "Professional Rust SDK for WEEX Exchange - AI Wars ready with full API coverage, AI Log upload, Futures trading"
@@ -9,6 +9,10 @@ repository = "https://github.com/akash-mondal/weex-rust-sdk"
 keywords = ["weex", "crypto", "trading", "exchange", "sdk"]
 categories = ["api-bindings", "asynchronous"]
 readme = "README.md"
+
+[[bin]]
+name = "weex-cli"
+path = "src/bin/weex_cli.rs"
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json", "rustls-tls"], default-features = false }
@@ -31,3 +35,4 @@ strum = { version = "0.25", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
 rand = "0.8"
+clap = { version = "4.0", features = ["derive"] }

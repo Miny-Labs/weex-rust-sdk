@@ -77,6 +77,19 @@ impl WeexClient {
             msg: wrapper.msg.unwrap_or_default() 
         })
     }
+
+    /// Get ticker as raw JSON string (useful for CLI)
+    pub async fn get_ticker_raw(&self, symbol: &str) -> Result<String, WeexError> {
+        let path = "/capi/v2/market/ticker";
+        let qs = format!("?symbol={}", symbol);
+        let url = format!("{}{}{}", self.base_url, path, qs);
+        
+        let timestamp = self.get_timestamp();
+        let headers = self.build_headers("GET", path, &qs, "", &timestamp)?;
+
+        let resp = self.client.get(&url).headers(headers).send().await?;
+        Ok(resp.text().await?)
+    }
     
     pub async fn get_balance(&self) -> Result<String, WeexError> {
          let path = "/capi/v2/account/balance";
